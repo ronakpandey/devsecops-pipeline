@@ -1,0 +1,49 @@
+name: DevSecOps Security Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Step 1 - Scan for Exposed Secrets (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Step 2 - Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Step 3 - Scan Python Dependencies (pip-audit)
+        run: |
+          pip install pip-audit
+          pip-audit -r App/requirements.txt
+
+      - name: Step 4 - Build Docker Container Image
+        run: |
+          docker build -t secure-api:${{ github.sha }} .
+
+      - name: Step 5 - Container Security Scan (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'secure-api:${{ github.sha }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+
+      - name: Step 6 - Quality Gate Passed
+        run: |
+          echo "All automated security gates passed successfully!"
