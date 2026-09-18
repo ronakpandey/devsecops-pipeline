@@ -5,7 +5,6 @@
 [![DevSecOps Security Pipeline](https://github.com/ronakpandey/devsecops-pipeline/actions/workflows/devsecops-pipeline.yml/badge.svg)](https://github.com/ronakpandey/devsecops-pipeline/actions/workflows/devsecops-pipeline.yml)
 
 
-
 A containerized Flask microservice integrated with automated security quality gates via GitHub Actions.
 
 
