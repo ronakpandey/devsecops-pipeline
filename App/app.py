@@ -2,9 +2,6 @@ from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-# SIMULATED SECRET LEAK (TO TEST DEVSECOPS PIPELINE FAILURE)
-AWS_SECRET_KEY = "AKIAIOSFODNN7ABCD123AKIAIOSFODNN7ABCD123"
-
 @app.route("/")
 def home():
     return jsonify({
