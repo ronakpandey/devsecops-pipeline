@@ -27,10 +27,9 @@ jobs:
           python-version: '3.11'
 
       - name: Step 3 - Scan Python Dependencies (pip-audit)
-        run: |
-          pip install pip-audit
-          pip-audit -r App/requirements.txt
-
+            run: |
+              pip install pip-audit
+              pip-audit -r App/requirements.txt
       - name: Step 4 - Build Docker Container Image
         run: |
           docker build -t secure-api:${{ github.sha }} .
