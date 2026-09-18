@@ -2,7 +2,7 @@
 
 
 
-\[!\[DevSecOps Security Pipeline](https://github.com/ronakpandey/devsecops-pipeline/actions/workflows/devsecops-pipeline.yml/badge.svg)](https://github.com/ronakpandey/devsecops-pipeline/actions/workflows/devsecops-pipeline.yml)
+[![DevSecOps Security Pipeline](https://github.com/ronakpandey/devsecops-pipeline/actions/workflows/devsecops-pipeline.yml/badge.svg)](https://github.com/ronakpandey/devsecops-pipeline/actions/workflows/devsecops-pipeline.yml)
 
 
 
