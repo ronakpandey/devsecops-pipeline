@@ -29,17 +29,22 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Step 3 - Scan Python Dependencies (pip-audit)
+      - name: Step 3 - Static Application Security Testing (Bandit SAST)
+        run: |
+          pip install bandit
+          bandit -r App/ -ll -ii
+
+      - name: Step 4 - Scan Python Dependencies (pip-audit SCA)
         run: |
           python -m pip install --upgrade pip
           pip install pip-audit
           pip-audit -r App/requirements.txt
 
-      - name: Step 4 - Build Docker Container Image
+      - name: Step 5 - Build Docker Container Image
         run: |
           docker build -t secure-api:${{ github.sha }} .
 
-      - name: Step 5 - Container Security Scan (Trivy)
+      - name: Step 6 - Container Security Scan (Trivy)
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'secure-api:${{ github.sha }}'
@@ -48,6 +53,6 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
-      - name: Step 6 - Quality Gate Passed
+      - name: Step 7 - Quality Gate Passed
         run: |
-          echo "All automated security gates passed successfully!"
+          echo "All automated DevSecOps security gates passed successfully!"
