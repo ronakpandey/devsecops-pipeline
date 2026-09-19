@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   security-scan:
     runs-on: ubuntu-latest
@@ -42,17 +46,31 @@ jobs:
 
       - name: Step 5 - Build Docker Container Image
         run: |
-          docker build -t secure-api:${{ github.sha }} .
+          docker build -t ghcr.io/${{ github.repository }}:${{ github.sha }} -t ghcr.io/${{ github.repository }}:latest .
 
       - name: Step 6 - Container Security Scan (Trivy)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'secure-api:${{ github.sha }}'
+          image-ref: 'ghcr.io/${{ github.repository }}:${{ github.sha }}'
           format: 'table'
           exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
-      - name: Step 7 - Quality Gate Passed
+      - name: Step 7 - Log in to GitHub Container Registry (GHCR)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Step 8 - Publish Scanned Image to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          echo "All automated DevSecOps security gates passed successfully!"
+          docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository }}:latest
+
+      - name: Step 9 - Quality Gate Passed
+        run: |
+          echo "All automated DevSecOps security gates passed and image published successfully!"
