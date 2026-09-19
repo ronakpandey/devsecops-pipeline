@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 
 app = Flask(__name__)
@@ -11,4 +12,6 @@ def home():
     })
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "5000"))
+    app.run(host=host, port=port)
